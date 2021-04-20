@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * A settings page under OneSignal to set which user roles have the capability to send push notifications
  */
@@ -24,7 +24,7 @@ class Permissions_Admin_Page {
 
 
     /**
-     * Construct the page 
+     * Construct the page
      */
     function __construct () {
         \add_action( 'admin_menu', array ($this, 'permissions_admin_page' ), 25);
@@ -38,11 +38,11 @@ class Permissions_Admin_Page {
     function permissions_admin_page() {
         $this->hook = add_submenu_page(
             'onesignal-push',               // parent
-            'Push notification permissions',           // title 
+            'Push notification permissions',           // title
             'Permissions',                // menu title
             $this->capability,               // capability
             'push-notification-permissions',  // slug
-            array ($this, 'permissions_admin_content')       // content 
+            array ($this, 'permissions_admin_content')       // content
         );
     }
 
@@ -65,7 +65,7 @@ class Permissions_Admin_Page {
         <p><?php esc_html_e('These settings do not control who can send notifications from outside WordPress (e.g., the OneSignal dashboard).', 'onesignal-push-permissions'); ?></p>
 
         <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-        
+
             <input type="hidden" name="action" value="push_notifications_save_permissions">
 
 
@@ -89,12 +89,12 @@ class Permissions_Admin_Page {
                     </tr>
                 </tbody>
             </table>
-            
+
             <?php \wp_nonce_field( 'save_push_permissions_options', 'push_permissions_admin_nonce' ); ?>
             <?php \submit_button( __( 'Save push permissions', 'onesignal-push-permissions' ), 'primary' ); ?>
 
         </form>
-        <?php 
+        <?php
     }
 
 
@@ -102,33 +102,36 @@ class Permissions_Admin_Page {
      * Saves permission settings
      */
     function save_permissions () {
-                
+
         // check user capability
         if ( ! \current_user_can( $this->capability ) ) {
-			\wp_die( \esc_html__( 'You do not have sufficient permissions to access this page.', 'onesignal-push-permissions' ) );
-		}
+    			\wp_die( \esc_html__( 'You do not have sufficient permissions to access this page.', 'onesignal-push-permissions' ) );
+    		}
 
-        // check nonce 
-        if ( ! isset( $_POST['push_permissions_admin_nonce'] ) || ! \wp_verify_nonce( \sanitize_text_field( \wp_unslash( $_POST['push_permissions_admin_nonce'] ) ), 'save_push_permissions_options' ) ) { 
-			\wp_die( \esc_html__('You are not authorized to perform that action', 'onesignal-push-permissions' ) );
-		}
+            // check nonce
+            if ( ! isset( $_POST['push_permissions_admin_nonce'] ) || ! \wp_verify_nonce( \sanitize_text_field( \wp_unslash( $_POST['push_permissions_admin_nonce'] ) ), 'save_push_permissions_options' ) ) {
+    			\wp_die( \esc_html__('You are not authorized to perform that action', 'onesignal-push-permissions' ) );
+    		}
 
         // if notification roles were sent
+        $new_roles = array();
         if (isset ($_POST['onesignal-push-notification-roles']) && is_array  ($_POST['onesignal-push-notification-roles']) ) {
-
-            // check all roles
-            foreach (\wp_roles()->role_objects as $slug => $role) {
-                // if the role was saved from the form, add the push capability to it
-                if (in_array ($slug, $_POST['onesignal-push-notification-roles'])) {
-                    $role->add_cap( PUSH_CAPABILITY, true );
-                }
-                // otherwise remove the push capability 
-                else {
-                    $role->remove_cap( PUSH_CAPABILITY );
-                }
-            }
-
+          $new_roles = $_POST['onesignal-push-notification-roles'];
         }
+
+        // check all roles
+        foreach (\wp_roles()->role_objects as $slug => $role) {
+            // if the role was saved from the form, add the push capability to it
+            if (in_array ($slug, $new_roles)) {
+                $role->add_cap( PUSH_CAPABILITY, true );
+            }
+            // otherwise remove the push capability
+            else {
+                $role->remove_cap( PUSH_CAPABILITY );
+            }
+        }
+
+
 
         return \wp_safe_redirect (\admin_url ('admin.php?page=push-notification-permissions&saved=1'));
     }
