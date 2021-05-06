@@ -105,13 +105,13 @@ class Permissions_Admin_Page {
 
         // check user capability
         if ( ! \current_user_can( $this->capability ) ) {
-    			\wp_die( \esc_html__( 'You do not have sufficient permissions to access this page.', 'onesignal-push-permissions' ) );
-    		}
+            \wp_die( \esc_html__( 'You do not have sufficient permissions to access this page.', 'onesignal-push-permissions' ) );
+        }
 
-            // check nonce
-            if ( ! isset( $_POST['push_permissions_admin_nonce'] ) || ! \wp_verify_nonce( \sanitize_text_field( \wp_unslash( $_POST['push_permissions_admin_nonce'] ) ), 'save_push_permissions_options' ) ) {
-    			\wp_die( \esc_html__('You are not authorized to perform that action', 'onesignal-push-permissions' ) );
-    		}
+        // check nonce
+        if ( ! isset( $_POST['push_permissions_admin_nonce'] ) || ! \wp_verify_nonce( \sanitize_text_field( \wp_unslash( $_POST['push_permissions_admin_nonce'] ) ), 'save_push_permissions_options' ) ) {
+            \wp_die( \esc_html__('You are not authorized to perform that action', 'onesignal-push-permissions' ) );
+        }
 
         // if notification roles were sent
         $new_roles = array();
@@ -130,8 +130,6 @@ class Permissions_Admin_Page {
                 $role->remove_cap( PUSH_CAPABILITY );
             }
         }
-
-
 
         return \wp_safe_redirect (\admin_url ('admin.php?page=push-notification-permissions&saved=1'));
     }
