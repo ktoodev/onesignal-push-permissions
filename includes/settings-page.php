@@ -5,12 +5,18 @@
 
 namespace OnesignalPushPermissions;
 
-new Permissions_Admin_Page();
-
 /**
- * Add a settings page to the OneSignal settings area to administer tags
+ * Add a settings page to the OneSignal settings area to administer tags. Singleton.
 */
 class Permissions_Admin_Page {
+
+
+	/**
+	 * Instances of this singleton
+	 *
+	 * @var array
+	 */
+	private static $instance;
 
     /**
      * Hook for the sub page
@@ -31,6 +37,15 @@ class Permissions_Admin_Page {
         \add_action ('admin_post_push_notifications_save_permissions', array ($this, 'save_permissions'));
     }
 
+    /**
+	 * Get an instance
+	 */
+	public static function instance() {
+		if ( ! isset( self::$instance ) ) {
+			self::$instance = new Permissions_Admin_Page();
+		}
+		return self::$instance;
+	}
 
     /**
      * Add a page for setting push permissions under the OneSignal page
@@ -134,3 +149,13 @@ class Permissions_Admin_Page {
         return \wp_safe_redirect (\admin_url ('admin.php?page=push-notification-permissions&saved=1'));
     }
 }
+
+/**
+ * Returns an initialized instance
+ *
+ * @return Permissions_Admin_Page
+ */
+function Permissions_Admin_Page() { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
+	return Permissions_Admin_Page::instance();
+}
+add_action( 'after_setup_theme',  __NAMESPACE__ . '\Permissions_Admin_Page' );
