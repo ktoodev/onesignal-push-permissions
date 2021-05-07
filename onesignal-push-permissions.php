@@ -16,7 +16,7 @@ define (__NAMESPACE__ . '\PLUGIN_FILE', __FILE__);
 
 define (__NAMESPACE__ . '\PUSH_CAPABILITY', 'send_push_notifications');
 
-require_once (PLUGIN_DIR . '/includes/settings-page.php');
+require_once (PLUGIN_DIR . '/includes/class-permissions-admin-page.php');
 
 
 /**
