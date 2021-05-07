@@ -13,3 +13,15 @@ The easiest way to install is to download [the latest release](https://github.co
 The plugin extends the [official OneSignal plugin](https://wordpress.org/plugins/onesignal-free-web-push-notifications/) to add an interface for choosing which WordPress user roles can send push notifications. 
 
 After activation, it adds a new "Permissions" admin page under the "OneSignal Push" menu. On that page is a list of user roles supported on the WordPress site where it is installed. Only users with roles selected on this settings page will be able to send notifications from within WordPress using the OneSignal plugin. 
+
+## Development
+
+### Testing
+
+Install:
+
+    $ bin/install-wp-tests.sh <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]
+
+Run tests:
+
+    $ phpunit
